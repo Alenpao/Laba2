@@ -1,0 +1,81 @@
+using System;
+using System.Collections.Generic;
+
+// Базовый класс студента
+class Student
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+}
+
+// Класс старосты, наследуется от класса Student
+class Headman : Student
+{
+    public string Group { get; set; }
+}
+
+// Класс группы, содержит список студентов и старосту
+class Group
+{
+    public List<Student> Students { get; set; }
+    public Headman Headman { get; set; }
+}
+
+// Класс для работы с данными о студентах без возможности редактирования
+class ReadOnlyStudentInfo
+{
+    public void DisplayStudentInfo(Student student)
+    {
+        Console.WriteLine($"Name: {student.Name}, Age: {student.Age}");
+    }
+
+    public void DisplayGroupInfo(Group group)
+    {
+        Console.WriteLine($"Group: {group.Headman.Group}");
+        foreach (var student in group.Students)
+        {
+            DisplayStudentInfo(student);
+        }
+    }
+}
+
+// Класс для работы с данными о студентах с возможностью редактирования
+class EditableStudentInfo : ReadOnlyStudentInfo
+{
+    public void EditStudentInfo(Student student, string name, int age)
+    {
+        student.Name = name;
+        student. Age = age;
+    }
+
+    public void EditHeadmanInfo(Headman headman, string group)
+    {
+        headman.Group = group;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Group group1 = new Group
+        {
+            Headman = new Headman { Name = "Jim", Age = 20, Group = "A" },
+            Students = new List<Student>
+            {
+                new Student { Name = "Alice", Age = 19 },
+                new Student { Name = "Bob", Age = 21 }
+            }
+        };
+
+        ReadOnlyStudentInfo readOnlyInfo = new ReadOnlyStudentInfo();
+        readOnlyInfo.DisplayGroupInfo(group1);
+
+        EditableStudentInfo editableInfo = new EditableStudentInfo();
+        editableInfo.EditStudentInfo(group1.Students[0], "Alisa", 20);
+        editableInfo.EditHeadmanInfo(group1.Headman, "B");
+
+        Console.WriteLine("\nAfter editing:");
+        readOnlyInfo.DisplayGroupInfo(group1);
+    }
+}
